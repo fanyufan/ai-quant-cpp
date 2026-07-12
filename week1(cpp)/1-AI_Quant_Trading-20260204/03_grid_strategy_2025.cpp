@@ -237,8 +237,8 @@ int main() {
     fmt::print("\n{:-<70}\n", "");
     fmt::print("初始资金：{:.2f} 元\n", nav.front());
     fmt::print("期末资金：{:.2f} 元\n", nav.back());
-    fmt::print("总收益率：{:.4%}\n", total_return);
-    fmt::print("最大回撤：{:.4%}\n", max_drawdown);
+    fmt::print("总收益率：{:.4f}%\n", total_return * 100.0);
+    fmt::print("最大回撤：{:.4f}%\n", max_drawdown * 100.0);
     fmt::print("{:-<70}\n", "");
     fmt::print("总交易次数：{} 次\n", trades.size());
     fmt::print("  买入次数：{} 次\n", buy_count);
@@ -314,8 +314,8 @@ int main() {
         f << "\n" << std::string(60, '-') << "\n";
         f << fmt::format("初始资金：{:.2f} 元\n", nav.front());
         f << fmt::format("期末资金：{:.2f} 元\n", nav.back());
-        f << fmt::format("总收益率：{:.4%}\n", total_return);
-        f << fmt::format("最大回撤：{:.4%}\n", max_drawdown);
+        f << fmt::format("总收益率：{:.4f}%\n", total_return * 100.0);
+        f << fmt::format("最大回撤：{:.4f}%\n", max_drawdown * 100.0);
         f << std::string(60, '-') << "\n";
         f << fmt::format("总交易次数：{} 次\n", trades.size());
         f << fmt::format("  买入次数：{} 次\n", buy_count);
@@ -360,7 +360,7 @@ int main() {
     ax1->ylabel("股价 (元)");
     ax1->title(fmt::format("{}({}) 网格交易策略 - 2025年", STOCK_NAME, STOCK_CODE));
     ax1->grid(on);
-    ax1->legend()->location(legend::general_alignment::topright);
+    ax1->legend();
 
     auto ax2 = subplot(2, 1, 1);
     std::vector<double> nav_wan(nav.size());
@@ -371,7 +371,7 @@ int main() {
     ax2->xlabel("日期");
     ax2->title("资金曲线");
     ax2->grid(on);
-    ax2->legend()->location(legend::general_alignment::topleft);
+    ax2->legend();
 
     fig->save("outputs/grid_strategy_2025_chart.png");
     fmt::print("\n策略图表已保存至：outputs/grid_strategy_2025_chart.png\n");

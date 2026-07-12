@@ -98,7 +98,7 @@ int main() {
     ax1->ylabel("价格");
     ax1->title("趋势型：MA 方向");
     ax1->grid(on);
-    ax1->legend()->location(legend::general_alignment::topleft);
+    ax1->legend();
 
     auto ax2 = subplot(4, 1, 1);
     ax2->plot(xs, rsi_v, "purple")->line_width(1.2).display_name(fmt::format("RSI({})", RSI_PERIOD));
@@ -109,7 +109,7 @@ int main() {
     ax2->ylabel("RSI");
     ax2->title("震荡型：RSI 位置（超买/超卖）");
     ax2->grid(on);
-    ax2->legend()->location(legend::general_alignment::topleft);
+    ax2->legend();
 
     auto ax3 = subplot(4, 1, 2);
     std::vector<double> red_x, red_y, green_x, green_y;
@@ -130,7 +130,7 @@ int main() {
     ax4->xlabel("日期");
     ax4->title("波动型：ATR 风险");
     ax4->grid(on);
-    ax4->legend()->location(legend::general_alignment::topleft);
+    ax4->legend();
 
     fs::create_directories("outputs");
     fig->save("outputs/8_贵州茅台指标仪表盘.png");

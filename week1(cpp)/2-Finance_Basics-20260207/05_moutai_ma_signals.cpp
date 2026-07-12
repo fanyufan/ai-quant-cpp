@@ -96,7 +96,7 @@ int main() {
     ax->ylabel("价格 (元)");
     ax->title(fmt::format("{}({}) MA{}/MA{} 金叉死叉", STOCK_NAME, STOCK_CODE, MA_SHORT, MA_LONG));
     ax->grid(on);
-    ax->legend()->location(legend::general_alignment::topleft);
+    ax->legend();
 
     fs::create_directories("outputs");
     std::string out_path = "outputs/4-贵州茅台MA交易信号.png";

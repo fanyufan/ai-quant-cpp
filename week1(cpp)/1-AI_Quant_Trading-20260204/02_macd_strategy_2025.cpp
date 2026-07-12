@@ -173,6 +173,7 @@ int main() {
     }
 
     // Print results
+
     fmt::print("开始回测：{}({}) - MACD策略\n", STOCK_NAME, STOCK_CODE);
     fmt::print("回测区间：{} 至 {}\n", START_DATE, END_DATE);
     fmt::print("初始资金：{:.0f} 元\n", INIT_CASH);
@@ -187,8 +188,8 @@ int main() {
     fmt::print("回测区间：{} 至 {}\n", START_DATE, END_DATE);
     fmt::print("初始资金：{:.2f} 元\n", INIT_CASH);
     fmt::print("期末净值：{:.2f} 元\n", nav.back());
-    fmt::print("总收益率：{:.4%}\n", total_return);
-    fmt::print("最大回撤：{:.4%}\n", max_drawdown);
+    fmt::print("总收益率：{:.4f}%\n", total_return * 100.0);
+    fmt::print("最大回撤：{:.4f}%\n", max_drawdown * 100.0);
     fmt::print("交易次数：{} 次\n", trades.size());
     fmt::print("期末持仓：{} 股\n", shares);
     fmt::print("期末现金：{:.2f} 元\n", cash);
@@ -199,8 +200,8 @@ int main() {
         double total_commission = 0.0;
         for (const auto& t : trades) {
             total_commission += t.commission;
-            fmt::print("  {} | {:4s} | 价格: {:.2f} | {}股 | 金额: {:.2f} | 手续费: {:.2f} | 仓位: {:.1%}\n",
-                       t.date, t.action, t.price, t.shares, t.amount, t.commission, t.position);
+            fmt::print("  {} | {:4s} | 价格: {:.2f} | {}股 | 金额: {:.2f} | 手续费: {:.2f} | 仓位: {:.1f}%\n",
+                       t.date, t.action, t.price, t.shares, t.amount, t.commission, t.position * 100.0);
         }
         fmt::print("\n累计手续费：{:.2f} 元\n", total_commission);
     }
@@ -248,8 +249,8 @@ int main() {
         f << fmt::format("回测区间：{} 至 {}\n", START_DATE, END_DATE);
         f << fmt::format("初始资金：{:.2f} 元\n", INIT_CASH);
         f << fmt::format("期末净值：{:.2f} 元\n", nav.back());
-        f << fmt::format("总收益率：{:.4%}\n", total_return);
-        f << fmt::format("最大回撤：{:.4%}\n", max_drawdown);
+        f << fmt::format("总收益率：{:.4f}%\n", total_return * 100.0);
+        f << fmt::format("最大回撤：{:.4f}%\n", max_drawdown * 100.0);
         f << fmt::format("交易次数：{} 次\n", trades.size());
         f << fmt::format("期末持仓：{} 股\n", shares);
         f << fmt::format("期末现金：{:.2f} 元\n", cash);
@@ -258,7 +259,7 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 1200);
 
     std::vector<double> xs(close.size());
@@ -291,7 +292,7 @@ int main() {
     ax1->ylabel("价格 (元)");
     ax1->title("股价走势与买卖点");
     ax1->grid(on);
-    ax1->legend()->location(legend::general_alignment::topleft);
+    ax1->legend();
 
     auto ax2 = subplot(3, 1, 1);
     ax2->plot(xs, dif, "b-")->line_width(1.2).display_name("DIF");
@@ -307,7 +308,7 @@ int main() {
     ax2->ylabel("MACD");
     ax2->title(fmt::format("MACD指标 (快线={}, 慢线={}, 信号线={})", SHORT_PERIOD, LONG_PERIOD, SIGNAL_PERIOD));
     ax2->grid(on);
-    ax2->legend()->location(legend::general_alignment::topleft);
+    ax2->legend();
 
     auto ax3 = subplot(3, 1, 2);
     std::vector<double> nav_wan(nav.size());
@@ -318,10 +319,15 @@ int main() {
     ax3->xlabel("日期");
     ax3->title("资金曲线");
     ax3->grid(on);
-    ax3->legend()->location(legend::general_alignment::topleft);
+    ax3->legend();
 
-    fig->save("outputs/macd_strategy_2025_chart.png");
-    fmt::print("\n策略图表已保存至：outputs/macd_strategy_2025_chart.png\n");
+    try {
+        fig->save("outputs/macd_strategy_2025_chart.png");
+        fmt::print("\n策略图表已保存至：outputs/macd_strategy_2025_chart.png\n");
+    } catch (const std::exception& e) {
+        fmt::print("\n保存图表失败：{}\n", e.what());
+        return 1;
+    }
 
     return 0;
 }

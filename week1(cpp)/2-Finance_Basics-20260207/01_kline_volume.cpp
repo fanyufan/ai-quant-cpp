@@ -104,7 +104,7 @@ int main() {
     ax2->xlabel("日期");
     ax2->title("成交量：上涨日红柱、下跌日绿柱，量价配合更健康");
     ax2->grid(on);
-    ax2->legend()->location(legend::general_alignment::topright);
+    ax2->legend();
 
     fs::create_directories("outputs");
     std::string out_path = "outputs/01_kline_volume_demo.png";

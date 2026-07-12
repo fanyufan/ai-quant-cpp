@@ -14,8 +14,8 @@
 namespace fs = std::filesystem;
 
 int main() {
-    const std::string STOCK_CODE = "688256.SH";
-    const std::string STOCK_NAME = "寒武纪";
+    const std::string STOCK_CODE = "600519.SH";
+    const std::string STOCK_NAME = "贵州茅台";
     const std::string DATA_START = "20240101";
     const std::string DATA_END = "20251231";
 

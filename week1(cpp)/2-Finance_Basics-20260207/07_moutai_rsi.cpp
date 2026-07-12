@@ -76,7 +76,7 @@ int main() {
     ax1->ylabel("价格 (元)");
     ax1->title("收盘价");
     ax1->grid(on);
-    ax1->legend()->location(legend::general_alignment::topleft);
+    ax1->legend();
 
     // Subplot 2: RSI
     auto ax2 = subplot(2, 1, 1);
@@ -108,7 +108,7 @@ int main() {
     ax2->xlabel("日期");
     ax2->title(fmt::format("RSI：>={} 超买（考虑减仓/网格卖），<={} 超卖（考虑加仓/网格买）", OVERBOUGHT, OVERSOLD));
     ax2->grid(on);
-    ax2->legend()->location(legend::general_alignment::topleft);
+    ax2->legend();
 
     fs::create_directories("outputs");
     std::string out_path = "outputs/6-贵州茅台RSI指标计算.png";
