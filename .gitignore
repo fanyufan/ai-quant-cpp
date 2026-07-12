@@ -1,3 +1,22 @@
+# ==================== 项目自定义规则 ====================
+
+# Windows 系统文件
+Desktop.ini
+
+# Kimi Code agent 配置
+.agents/
+
+# 本地脚本（issue 创建工具等）
+scripts/
+
+# macOS 系统文件
+.DS_Store
+
+# MASTER 开源训练/测试数据 pkl（体积过大，不进入版本控制）
+week6/12-论文复现与策略进化-20260325/MASTER-master/data/opensource/*.pkl
+
+# ==================== C++ 通用模板规则 ====================
+
 # Prerequisites
 *.d
 
