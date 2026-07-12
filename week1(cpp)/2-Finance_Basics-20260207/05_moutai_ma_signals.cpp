@@ -69,7 +69,7 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 600);
     auto ax = fig->current_axes();
 

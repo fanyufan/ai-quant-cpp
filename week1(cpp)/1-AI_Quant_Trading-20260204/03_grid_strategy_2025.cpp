@@ -329,7 +329,7 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 1000);
 
     std::vector<double> xs(close.size());

@@ -75,7 +75,7 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 800);
 
     std::vector<double> xs(close.size());

@@ -63,7 +63,7 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 800);
     fig->title(fmt::format("{}({}) RSI({}) 超买超卖示意", STOCK_NAME, STOCK_CODE, RSI_PERIOD));
 

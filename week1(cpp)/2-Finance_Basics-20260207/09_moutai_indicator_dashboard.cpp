@@ -88,7 +88,7 @@ int main() {
         vol_v.push_back(volume[i] / 10000.0);
     }
 
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 1200);
     fig->title(fmt::format("{}({}) 四维指标仪表盘：趋势+震荡+能量+波动", STOCK_NAME, STOCK_CODE));
 

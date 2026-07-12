@@ -18,7 +18,7 @@ void save_candlestick(const std::string& path,
     using namespace matplot;
 
     // Create figure with 2 subplots
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 800);
     fig->title(title);
 
@@ -65,7 +65,7 @@ void save_line_chart(const std::string& path,
                      const std::string& ylabel) {
     if (x.empty() || y.empty()) return;
 
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1200, 600);
     auto ax = fig->current_axes();
     ax->plot(x, y)->line_width(1.5);
@@ -82,7 +82,7 @@ void save_multi_subplot(const std::string& path,
                         const std::string& main_title) {
     if (ys.empty()) return;
 
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 1200);
     fig->title(main_title);
 

@@ -56,7 +56,7 @@ int main() {
         volume.push_back(volume_col[i]);
     }
 
-    auto fig = figure(true);
+    auto fig = figure(false);
     fig->size(1400, 800);
     fig->title(fmt::format("{}({}) K线图与成交量", STOCK_NAME, STOCK_CODE));
 
