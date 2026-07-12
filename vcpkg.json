@@ -1,0 +1,10 @@
+{
+  "name": "ai-quant-cpp",
+  "version": "0.1.0",
+  "dependencies": [
+    "matplotplusplus",
+    "nlohmann-json",
+    "cpr",
+    "fmt"
+  ]
+}
