@@ -1,0 +1,16 @@
+{
+  "cmake.configureSettings": {
+    "CMAKE_TOOLCHAIN_FILE": "C:/Fan/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "CMAKE_PREFIX_PATH": "C:/Fan/ai-quant-cpp/build/vcpkg_installed/x64-mingw-dynamic",
+    "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",
+    "VCPKG_HOST_TRIPLET": "x64-mingw-dynamic",
+    "VCPKG_MANIFEST_MODE": "ON"
+  },
+  "cmake.generator": "Ninja",
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.configureOnOpen": true,
+  "cmake.buildArgs": [],
+  "cmake.buildToolArgs": ["-j", "4"],
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.cppStandard": "c++17"
+}

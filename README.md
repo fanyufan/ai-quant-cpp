@@ -1,2 +1,226 @@
 # ai-quant-cpp
+
 高性能 AI 量化交易系统实战 | C++ 工程化 × 策略回测 × 低延迟执行 🚀
+
+本项目将 `week1/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
+
+---
+
+## 环境要求
+
+- Windows 10/11
+- [w64devkit](https://github.com/skeeto/w64devkit)（GCC + Ninja）
+- [CMake](https://cmake.org/) >= 3.20
+- [vcpkg](https://vcpkg.io/)（已集成到 CMake toolchain）
+- [gnuplot](http://www.gnuplot.info/)（Matplot++ 后端，需加入 PATH）
+- Tushare Pro 账号及 Token（数据下载脚本需要）
+
+---
+
+## 项目结构
+
+```text
+ai-quant-cpp/
+├── .vscode/
+│   └── settings.json       # VS Code CMake 配置
+├── CMakeLists.txt          # CMake 主配置
+├── vcpkg.json              # vcpkg 依赖清单
+├── week1/                  # 原始 Python 脚本（中文目录名）
+├── week1(cpp)/             # C++ 转换实现
+│   ├── 1-AI_Quant_Trading-20260204/      # 第一节：AI 量化交易
+│   ├── 2-Finance_Basics-20260207/        # 第二节：金融基础速通
+│   └── common/             # 共用库：csv / date / indicators / plotter / tushare_client
+└── build/                  # 构建输出目录（.gitignore 忽略）
+    └── bin/Debug/          # 可执行文件
+```
+
+---
+
+## 依赖
+
+`vcpkg.json` 中声明：
+
+- `matplotplusplus` — 绘图
+- `nlohmann-json` — JSON 解析
+- `cpr` — HTTP 请求
+- `fmt` — 格式化输出
+
+---
+
+## VS Code 配置（推荐）
+
+项目已提供 `.vscode/settings.json`，打开项目时会自动：
+
+- 使用 Ninja 作为生成器
+- 指定 vcpkg toolchain
+- 显式设置 `CMAKE_PREFIX_PATH` 指向 manifest 模式安装目录，避免 CMake 找不到 vcpkg 包
+- 设置 `x64-mingw-dynamic` triplet
+- 配置 IntelliSense 使用 CMake Tools 作为 provider
+
+如果 `CMakeLists.txt` 中 `find_package(...)` 报红，按 `Ctrl+Shift+P` → `CMake: Configure` 重新配置即可。
+
+---
+
+## 完整流程
+
+### 1. 配置（首次或 CMakeLists.txt / vcpkg.json 变更后执行）
+
+```powershell
+cd C:\Fan\ai-quant-cpp
+cmake -B build -S . -G "Ninja" `
+  -DCMAKE_TOOLCHAIN_FILE=C:\Fan\vcpkg\scripts\buildsystems\vcpkg.cmake `
+  -DCMAKE_PREFIX_PATH=C:\Fan\ai-quant-cpp\build\vcpkg_installed\x64-mingw-dynamic `
+  -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic `
+  -DVCPKG_HOST_TRIPLET=x64-mingw-dynamic `
+  -DVCPKG_MANIFEST_MODE=ON
+```
+
+说明：
+- `-B build`：构建目录
+- `-S .`：源码目录
+- `-G "Ninja"`：使用 Ninja 构建
+- `CMAKE_TOOLCHAIN_FILE`：接入 vcpkg
+- `CMAKE_PREFIX_PATH`：显式指定 vcpkg manifest 安装目录，解决部分环境下 CMake 找不到包的问题
+- `VCPKG_TARGET_TRIPLET` / `VCPKG_HOST_TRIPLET`：指定 MinGW 64 位动态链接
+- `VCPKG_MANIFEST_MODE=ON`：根据 `vcpkg.json` 自动安装依赖
+
+配置成功后会看到 `-- Running vcpkg install ... done` 和 `-- Generating done`。
+
+---
+
+### 2. 编译
+
+**编译全部：**
+
+```powershell
+ninja -C build -j 4
+```
+
+**单独编译某个目标：**
+
+```powershell
+ninja -C build fb_08_moutai_atr
+```
+
+目标名前缀规则：
+- `ai_xxx`：第一节 `1-AI_Quant_Trading-20260204` 下的程序
+- `fb_xxx`：第二节 `2-Finance_Basics-20260207` 下的程序
+
+查看所有目标：
+
+```powershell
+ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_)"
+```
+
+编译完成后，可执行文件位于：
+
+```text
+build/bin/Debug/
+```
+
+---
+
+### 3. 运行
+
+**必须在项目根目录运行**，因为程序使用相对路径 `data/` 和 `outputs/`。
+
+```powershell
+cd C:\Fan\ai-quant-cpp
+```
+
+#### 3.1 数据下载类
+
+运行前需要设置 `TUSHARE_TOKEN` 环境变量：
+
+```powershell
+$env:TUSHARE_TOKEN = "你的token"
+```
+
+```powershell
+# 下载寒武纪日线数据
+./build/bin/Debug/01_tushare_download_data.exe
+
+# 下载财务数据
+./build/bin/Debug/10_tushare_financial_data_download.exe
+```
+
+#### 3.2 策略回测 / 指标计算类
+
+这些程序依赖 `data/600519_SH_daily.csv`：
+
+```powershell
+./build/bin/Debug/02_macd_strategy_2025.exe
+./build/bin/Debug/03_grid_strategy_2025.exe
+./build/bin/Debug/05_moutai_ma_signals.exe
+./build/bin/Debug/06_moutai_macd_signals.exe
+./build/bin/Debug/07_moutai_rsi.exe
+./build/bin/Debug/08_moutai_atr.exe
+./build/bin/Debug/09_moutai_indicator_dashboard.exe
+```
+
+#### 3.3 选股类
+
+这些程序依赖 `data/stock_basic.csv`、`data/daily_basic_latest.csv`、`data/fina_indicator_pool.csv`：
+
+```powershell
+./build/bin/Debug/03_graham_pb_stock_picker.exe
+./build/bin/Debug/04_fundamental_stock_picker.exe
+```
+
+---
+
+## 常见问题
+
+### 1. `vcpkg-running.lock: waiting to take filesystem lock`
+
+vcpkg 进程没正常退出。解决：
+
+```powershell
+taskkill /F /IM vcpkg.exe
+Remove-Item -Force C:\Fan\ai-quant-cpp\build\vcpkg_installed\vcpkg\vcpkg-running.lock
+```
+
+### 2. `Could not find a package configuration file provided by "Matplot++"`
+
+说明 `vcpkg_installed` 里的包损坏或没装好。删掉重建：
+
+```powershell
+Remove-Item -Recurse -Force C:\Fan\ai-quant-cpp\build\vcpkg_installed
+cmake -B build -S . -G "Ninja" `
+  -DCMAKE_TOOLCHAIN_FILE=C:\Fan\vcpkg\scripts\buildsystems\vcpkg.cmake `
+  -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic `
+  -DVCPKG_HOST_TRIPLET=x64-mingw-dynamic `
+  -DVCPKG_MANIFEST_MODE=ON
+```
+
+### 3. 程序提示找不到 `data/xxx.csv`
+
+确认在项目根目录运行，或把数据文件放到对应位置。
+
+---
+
+## 构建示例（完整命令链）
+
+```powershell
+cd C:\Fan\ai-quant-cpp
+
+# 配置
+cmake -B build -S . -G "Ninja" `
+  -DCMAKE_TOOLCHAIN_FILE=C:\Fan\vcpkg\scripts\buildsystems\vcpkg.cmake `
+  -DCMAKE_PREFIX_PATH=C:\Fan\ai-quant-cpp\build\vcpkg_installed\x64-mingw-dynamic `
+  -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic `
+  -DVCPKG_HOST_TRIPLET=x64-mingw-dynamic `
+  -DVCPKG_MANIFEST_MODE=ON
+
+# 编译
+ninja -C build -j 4
+
+# 设置 token（数据下载需要）
+$env:TUSHARE_TOKEN = "你的token"
+
+# 下载数据
+./build/bin/Debug/01_tushare_download_data.exe
+
+# 运行策略
+./build/bin/Debug/02_macd_strategy_2025.exe
+```
