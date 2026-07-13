@@ -329,7 +329,7 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(false);
+    auto fig = figure(true);
     fig->size(1400, 1000);
 
     std::vector<double> xs(close.size());
@@ -347,8 +347,9 @@ int main() {
     }
 
     auto ax1 = subplot(2, 1, 0);
+    ax1->hold(on);
     ax1->plot(xs, close, "b-")->line_width(1.5).display_name("收盘价");
-    ax1->plot(xs, std::vector<double>(xs.size(), CENTER_PRICE), "gray-")->line_width(2.0).display_name(fmt::format("中心线 {}", CENTER_PRICE));
+    ax1->plot(xs, std::vector<double>(xs.size(), CENTER_PRICE))->color("black").line_width(2.0).display_name(fmt::format("中心线 {}", CENTER_PRICE));
     for (double p : BUY_GRID_PRICES) {
         ax1->plot(xs, std::vector<double>(xs.size(), p), "g--")->line_width(1.0).display_name(fmt::format("买入 {}", static_cast<int>(p)));
     }
@@ -363,10 +364,11 @@ int main() {
     ax1->legend();
 
     auto ax2 = subplot(2, 1, 1);
+    ax2->hold(on);
     std::vector<double> nav_wan(nav.size());
     for (size_t i = 0; i < nav.size(); ++i) nav_wan[i] = nav[i] / 10000.0;
-    ax2->plot(xs, nav_wan, "purple")->line_width(1.5).display_name("资金曲线");
-    ax2->plot(xs, std::vector<double>(xs.size(), INIT_CASH / 10000.0), "k--")->display_name("初始资金");
+    ax2->plot(xs, nav_wan)->color(matplot::color::magenta).line_width(1.5).display_name("资金曲线");
+    ax2->plot(xs, std::vector<double>(xs.size(), INIT_CASH / 10000.0))->color("black").line_style("--").display_name("初始资金");
     ax2->ylabel("资金 (万元)");
     ax2->xlabel("日期");
     ax2->title("资金曲线");

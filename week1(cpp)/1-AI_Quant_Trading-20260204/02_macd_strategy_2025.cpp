@@ -259,8 +259,9 @@ int main() {
     }
 
     // Plot
-    auto fig = figure(false);
+    auto fig = figure(true);
     fig->size(1400, 1200);
+    fig->title(fmt::format("{}({}) MACD策略回测 - 2025年", STOCK_NAME, STOCK_CODE));
 
     std::vector<double> xs(close.size());
     for (size_t i = 0; i < close.size(); ++i) xs[i] = static_cast<double>(i);
@@ -282,6 +283,7 @@ int main() {
     }
 
     auto ax1 = subplot(3, 1, 0);
+    ax1->hold(on);
     ax1->plot(xs, close, "b-")->line_width(1.5).display_name("收盘价");
     if (!buy_x.empty()) {
         ax1->scatter(buy_x, buy_y, 12.0)->marker("^").color("red").display_name("买入点");
@@ -295,26 +297,32 @@ int main() {
     ax1->legend();
 
     auto ax2 = subplot(3, 1, 1);
+    ax2->hold(on);
     ax2->plot(xs, dif, "b-")->line_width(1.2).display_name("DIF");
-    ax2->plot(xs, dea, "orange")->line_width(1.2).display_name("DEA");
-    std::vector<double> red_x, red_y, green_x, green_y;
+    ax2->plot(xs, dea)->color("orange").line_width(1.2).display_name("DEA");
+    // Use filled rectangles instead of bar() because matplot++ bar() does not
+    // render negative y-values correctly in this environment.
+    double bar_width = 0.7;
     for (size_t i = 0; i < bar.size(); ++i) {
-        if (bar[i] >= 0) { red_x.push_back(xs[i]); red_y.push_back(bar[i]); }
-        else { green_x.push_back(xs[i]); green_y.push_back(bar[i]); }
+        double x = xs[i];
+        double v = bar[i];
+        const char* color = (v >= 0.0) ? "r" : "g";
+        std::vector<double> bx = {x - bar_width, x + bar_width, x + bar_width, x - bar_width};
+        std::vector<double> by = {0.0, 0.0, v, v};
+        ax2->fill(bx, by, color)->marker_face_color("none").marker_color("none");
     }
-    if (!red_x.empty()) ax2->bar(red_x, red_y)->face_color("red").display_name("红柱");
-    if (!green_x.empty()) ax2->bar(green_x, green_y)->face_color("green").display_name("绿柱");
-    ax2->plot(xs, std::vector<double>(xs.size(), 0.0), "k--");
+    ax2->plot(xs, std::vector<double>(xs.size(), 0.0))->color("black").line_style("--").line_width(1.5);
     ax2->ylabel("MACD");
     ax2->title(fmt::format("MACD指标 (快线={}, 慢线={}, 信号线={})", SHORT_PERIOD, LONG_PERIOD, SIGNAL_PERIOD));
     ax2->grid(on);
     ax2->legend();
 
     auto ax3 = subplot(3, 1, 2);
+    ax3->hold(on);
     std::vector<double> nav_wan(nav.size());
     for (size_t i = 0; i < nav.size(); ++i) nav_wan[i] = nav[i] / 10000.0;
-    ax3->plot(xs, nav_wan, "purple")->line_width(1.5).display_name("资金曲线");
-    ax3->plot(xs, std::vector<double>(xs.size(), INIT_CASH / 10000.0), "k--")->display_name("初始资金");
+    ax3->plot(xs, nav_wan)->color(matplot::color::magenta).line_width(1.5).display_name("资金曲线");
+    ax3->plot(xs, std::vector<double>(xs.size(), INIT_CASH / 10000.0))->color("black").line_style("--").display_name("初始资金");
     ax3->ylabel("资金 (万元)");
     ax3->xlabel("日期");
     ax3->title("资金曲线");
