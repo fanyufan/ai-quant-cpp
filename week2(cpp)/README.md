@@ -87,4 +87,55 @@ MYSQL_DB=quant
 
 命令行参数（`--mysql-host`、`--mysql-user` 等）会覆盖 `.env` 中的同名配置。
 
+### MySQL 认证插件注意事项
+
+`08_market_data_collection.exe` 使用 MariaDB C Connector 连接 MySQL。MySQL 8 默认使用 `caching_sha2_password` 认证插件，而 MariaDB C Connector 在 Windows 上可能找不到该插件 DLL，导致连接失败。由于错误信息是系统 ANSI 编码，`fmt` 会直接抛出 `invalid utf8` 异常，从而掩盖真实原因。
+
+**解决方案：将 MySQL 用户认证插件改为 `mysql_native_password`**。
+
+修改 root 用户：
+
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码';
+FLUSH PRIVILEGES;
+```
+
+或者新建一个专用用户（推荐）：
+
+```sql
+CREATE USER 'quant'@'%' IDENTIFIED WITH mysql_native_password BY '你的密码';
+GRANT ALL PRIVILEGES ON wucai_trade.* TO 'quant'@'%';
+FLUSH PRIVILEGES;
+```
+
+然后在 `.env` 中使用新用户：
+
+```bash
+MYSQL_USER=quant
+MYSQL_PASSWORD=你的密码
+MYSQL_DB=wucai_trade
+```
+
+验证用户插件是否已切换：
+
+```sql
+SELECT user, host, plugin FROM mysql.user WHERE user = 'quant';
+-- 应显示 plugin = mysql_native_password
+```
+
+### 还原/删除专用用户
+
+如果之后想删除为 C++ 程序创建的 `quant` 用户，可按以下步骤还原：
+
+```sql
+-- 1. 撤销刚才授予的所有权限
+REVOKE ALL PRIVILEGES ON wucai_trade.* FROM 'quant'@'%';
+
+-- 2. 删除用户（连带清除该用户的所有权限记录）
+DROP USER 'quant'@'%';
+
+-- 3. 刷新权限，让变更立即生效
+FLUSH PRIVILEGES;
+```
+
 注意：Windows 下运行请确保工作目录为项目根目录，或显式指定 `--input`/`--output-dir`/`--env-file` 路径。

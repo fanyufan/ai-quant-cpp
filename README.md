@@ -197,6 +197,35 @@ cmake -B build -S . -G "Ninja" `
 
 确认在项目根目录运行，或把数据文件放到对应位置。
 
+### 4. 运行 `08_market_data_collection.exe --write-mysql` 报 `invalid utf8`
+
+这是 MariaDB C Connector 在 Windows 上无法加载 MySQL 8 默认的 `caching_sha2_password` 插件导致的。错误信息是 ANSI 编码，`fmt` 格式化时会抛出 `invalid utf8`。
+
+解决：把 MySQL 用户认证插件改为 `mysql_native_password`：
+
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码';
+FLUSH PRIVILEGES;
+```
+
+或新建专用用户：
+
+```sql
+CREATE USER 'quant'@'%' IDENTIFIED WITH mysql_native_password BY '你的密码';
+GRANT ALL PRIVILEGES ON wucai_trade.* TO 'quant'@'%';
+FLUSH PRIVILEGES;
+```
+
+如需删除该用户：
+
+```sql
+REVOKE ALL PRIVILEGES ON wucai_trade.* FROM 'quant'@'%';
+DROP USER 'quant'@'%';
+FLUSH PRIVILEGES;
+```
+
+详见 `week2(cpp)/README.md` 的 MySQL 配置说明。
+
 ---
 
 ## 构建示例（完整命令链）
