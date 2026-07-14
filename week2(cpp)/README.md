@@ -13,8 +13,8 @@
 | `3-.../CASE-多因子选股/多因子选股-筛选2.py` | `3-Infrastructure_Building-20260211/CASE-MultiFactorStockPicking/05_multi_factor_filter2.cpp` | 按行业百分位排名打分并生成分布图 |
 | `4-.../CASE-数据采集/7-关键催化剂采集.py` | `4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection/06_key_catalyst_collection.cpp` | 调用 Qwen Max 联网搜索，输出 CSV/SQL 文件（不写 MySQL） |
 | `4-.../CASE-数据采集/1-行情数据采集.py` | `4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection/08_market_data_collection.cpp` | 使用 Tushare `daily` 采集全量日线；默认测试模式只采 600519.SH；输出 CSV/SQL，并支持可选的 MySQL 直接写入 |
-| `4-.../CASE-数据采集/2-财务数据采集.py` | `4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection/09_financial_data_collection.cpp` | 使用 Tushare `fina_indicator` 采集全量财务指标；默认测试模式，CSV/SQL 输出。注：revenue / net_profit / total_assets / total_equity 来自资产负债表/利润表，当前版本留空，可后续接入 `income`/`balancesheet` 接口补全 |
-| `4-.../CASE-数据采集/3-宏观数据采集.py` | `4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection/10_macro_data_collection.cpp` | 使用 Tushare 宏观接口（cpi/ppi/pmi/m/sf/lpr），CSV/SQL 输出 |
+| `4-.../CASE-数据采集/2-财务数据采集.py` | `4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection/09_financial_data_collection.cpp` | 使用 Tushare `fina_indicator` 采集全量财务指标；默认测试模式，CSV/SQL 输出，并支持可选的 MySQL 直接写入。注：revenue / net_profit / total_assets / total_equity 来自资产负债表/利润表，当前版本留空，可后续接入 `income`/`balancesheet` 接口补全 |
+| `4-.../CASE-数据采集/3-宏观数据采集.py` | `4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection/10_macro_data_collection.cpp` | 使用 Tushare 宏观接口（cpi/ppi/pmi/m/sf/lpr），CSV/SQL 输出，并支持可选的 MySQL 直接写入 |
 
 ## 未转换文件
 
@@ -55,8 +55,8 @@ set TUSHARE_TOKEN=your_token
 ./build/bin/Debug/08_market_data_collection.exe --full   # 全量 A 股
 ./build/bin/Debug/08_market_data_collection.exe --write-mysql --mysql-user root --mysql-password your_pass --mysql-db quant  # 同时写入 MySQL
 ./build/bin/Debug/08_market_data_collection.exe --write-mysql                                        # 从 .env 读取数据库配置
-./build/bin/Debug/09_financial_data_collection.exe       # 测试模式：600519.SH
-./build/bin/Debug/10_macro_data_collection.exe
+./build/bin/Debug/09_financial_data_collection.exe --write-mysql                                   # 财务指标写入 MySQL
+./build/bin/Debug/10_macro_data_collection.exe --write-mysql                                       # 宏观指标写入 MySQL
 
 # 多因子选股（需要输入 CSV）
 ./build/bin/Debug/04_multi_factor_filter1.exe --input data/stock_fina_pool_QMT.csv --output data/stock_fina_selected_QMT.csv
@@ -69,7 +69,7 @@ set DASHSCOPE_API_KEY=your_key
 
 ### 使用 `.env` 配置 MySQL
 
-`08_market_data_collection.exe` 支持从项目根目录的 `.env` 文件读取数据库配置：
+`08_market_data_collection.exe`、`09_financial_data_collection.exe`、`10_macro_data_collection.exe` 都支持从项目根目录的 `.env` 文件读取数据库配置：
 
 ```bash
 MYSQL_HOST=localhost
