@@ -23,4 +23,32 @@ std::vector<double> atr(const std::vector<double>& high,
                         const std::vector<double>& close,
                         size_t period = 14);
 
+struct BollingerResult {
+    std::vector<double> upper;
+    std::vector<double> middle;
+    std::vector<double> lower;
+};
+BollingerResult bollinger(const std::vector<double>& prices,
+                          size_t period = 20,
+                          double k = 2.0);
+
+// 乖离率 BIAS = (price - ma) / ma
+std::vector<double> bias(const std::vector<double>& prices, size_t period);
+
+// 动量 / ROC = (price - price[n]) / price[n] * 100
+std::vector<double> roc(const std::vector<double>& prices, size_t period = 10);
+std::vector<double> momentum(const std::vector<double>& prices, size_t period = 10);
+
+// ADX (Average Directional Index)，返回 +DI, -DI, DX, ADX
+struct AdxResult {
+    std::vector<double> plus_di;
+    std::vector<double> minus_di;
+    std::vector<double> dx;
+    std::vector<double> adx;
+};
+AdxResult adx(const std::vector<double>& high,
+              const std::vector<double>& low,
+              const std::vector<double>& close,
+              size_t period = 14);
+
 } // namespace quant::ind

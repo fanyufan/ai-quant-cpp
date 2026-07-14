@@ -140,6 +140,10 @@ cd C:\Fan\ai-quant-cpp
 
 `week2(cpp)/` 下的 C++ 转换脚本（数据采集、多因子选股、关键催化剂等）使用方法详见 `week2(cpp)/README.md`，包括 Tushare Token、MySQL `.env` 配置、各脚本参数及常见问题。
 
+#### 3.3 week3(cpp) 回测与技术指标
+
+`week3(cpp)/` 下的 C++ 转换脚本（Backtrader 风格回测、TA-Lib 指标/形态、选股雷达等）使用方法详见 `week3(cpp)/README.md`，包括回测引擎用法、指标演示和 MySQL 选股雷达。
+
 ---
 
 ## 常见问题
