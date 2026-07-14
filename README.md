@@ -167,6 +167,10 @@ $env:TUSHARE_TOKEN = "你的token"
 ./build/bin/Debug/04_fundamental_stock_picker.exe
 ```
 
+#### 3.4 week2(cpp) 数据/因子案例
+
+`week2(cpp)/` 下的 C++ 转换脚本（数据采集、多因子选股、关键催化剂等）使用方法详见 `week2(cpp)/README.md`，包括 Tushare Token、MySQL `.env` 配置、各脚本参数及常见问题。
+
 ---
 
 ## 常见问题
