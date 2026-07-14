@@ -1,6 +1,6 @@
 # week2(cpp) — Python 到 C++ 的转换
 
-本目录对应 `week2/` 下的 Python 案例，使用现有 C++ 工具链（`week1(cpp)/common/`）进行了重写。
+本目录对应 `week2/` 下的 Python 案例，使用现有 C++ 工具链（`common/`）进行了重写。
 
 ## 已转换文件
 
@@ -31,10 +31,10 @@
 
 ## 公共库扩展
 
-- `week1(cpp)/common/tushare_client.hpp/cpp`：新增 `adj_factor`、`stk_mins`；补充宏观接口 `cn_cpi`、`cn_ppi`、`cn_pmi`、`cn_m`、`sf_month`、`lpr_data`。
-- `week1(cpp)/common/rank.hpp/cpp`：新增行业内分组百分位排名 helpers。
-- `week1(cpp)/common/plotter.hpp/cpp`：新增水平柱状图 helper（当前 gnuplot 后端会回退为垂直柱状图并给出提示）。
-- `week1(cpp)/common/mysql_client.hpp/cpp`：基于 MariaDB C Connector 的简单 MySQL C API 封装。
+- `common/tushare_client.hpp/cpp`：新增 `adj_factor`、`stk_mins`；补充宏观接口 `cn_cpi`、`cn_ppi`、`cn_pmi`、`cn_m`、`sf_month`、`lpr_data`。
+- `common/rank.hpp/cpp`：新增行业内分组百分位排名 helpers。
+- `common/plotter.hpp/cpp`：新增水平柱状图 helper（当前 gnuplot 后端会回退为垂直柱状图并给出提示）。
+- `common/mysql_client.hpp/cpp`：基于 MariaDB C Connector 的简单 MySQL C API 封装。
 - 项目集成 `third_party/mariadb-connector-c-3.4.9/` 源码，通过 `add_subdirectory` 与 MinGW 一起构建，不依赖 vcpkg。
 
 ## 构建

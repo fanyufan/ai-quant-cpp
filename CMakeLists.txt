@@ -40,11 +40,11 @@ add_subdirectory(third_party/mariadb-connector-c-3.4.9 EXCLUDE_FROM_ALL)
 
 # MySQL C client wrapper
 add_library(quant_mysql STATIC
-  "week1(cpp)/common/mysql_client.cpp"
+  "common/mysql_client.cpp"
 )
 
 target_include_directories(quant_mysql PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/week1(cpp)/common"
+  "${CMAKE_CURRENT_SOURCE_DIR}/common"
   "${CMAKE_CURRENT_SOURCE_DIR}/third_party/mariadb-connector-c-3.4.9/include"
   "${CMAKE_CURRENT_BINARY_DIR}/third_party/mariadb-connector-c-3.4.9/include"
 )
@@ -53,17 +53,17 @@ target_link_libraries(quant_mysql PUBLIC libmariadb)
 
 # Common utility library
 add_library(quant_utils STATIC
-  "week1(cpp)/common/csv.cpp"
-  "week1(cpp)/common/date_utils.cpp"
-  "week1(cpp)/common/env.cpp"
-  "week1(cpp)/common/indicators.cpp"
-  "week1(cpp)/common/plotter.cpp"
-  "week1(cpp)/common/tushare_client.cpp"
-  "week1(cpp)/common/rank.cpp"
+  "common/csv.cpp"
+  "common/date_utils.cpp"
+  "common/env.cpp"
+  "common/indicators.cpp"
+  "common/plotter.cpp"
+  "common/tushare_client.cpp"
+  "common/rank.cpp"
 )
 
 target_include_directories(quant_utils PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/week1(cpp)/common"
+  "${CMAKE_CURRENT_SOURCE_DIR}/common"
 )
 
 target_link_libraries(quant_utils PUBLIC
@@ -130,7 +130,7 @@ add_week2_executable(w2_data_09_financial_data_collection "4-Data_Acquisition_Cl
 add_week2_executable(w2_data_10_macro_data_collection "4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection" "10_macro_data_collection")
 
 # MariaDB C Connector 链接测试
-add_executable(mariadb_link_test "week1(cpp)/common/mariadb_link_test.cpp")
+add_executable(mariadb_link_test "common/mariadb_link_test.cpp")
 target_include_directories(mariadb_link_test PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/third_party/mariadb-connector-c-3.4.9/include"
   "${CMAKE_CURRENT_BINARY_DIR}/third_party/mariadb-connector-c-3.4.9/include"
