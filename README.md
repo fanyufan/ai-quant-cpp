@@ -25,11 +25,15 @@ ai-quant-cpp/
 │   └── settings.json       # VS Code CMake 配置
 ├── CMakeLists.txt          # CMake 主配置
 ├── vcpkg.json              # vcpkg 依赖清单
+├── common/                 # 共用 C++ 库：csv / date / indicators / plotter / tushare_client / mysql_client
 ├── week1/                  # 原始 Python 脚本（中文目录名）
-├── week1(cpp)/             # C++ 转换实现
-│   ├── 1-AI_Quant_Trading-20260204/      # 第一节：AI 量化交易
-│   ├── 2-Finance_Basics-20260207/        # 第二节：金融基础速通
-│   └── common/             # 共用库：csv / date / indicators / plotter / tushare_client
+├── week1(cpp)/             # week1 的 C++ 转换实现
+│   ├── 1-AI_Quant_Trading-20260204/
+│   └── 2-Finance_Basics-20260207/
+├── week2/                  # 原始 Python 脚本（中文目录名）
+├── week2(cpp)/             # week2 的 C++ 转换实现
+│   ├── 3-Infrastructure_Building-20260211/
+│   └── 4-Data_Acquisition_Cleaning-20260225/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -128,46 +132,11 @@ build/bin/Debug/
 cd C:\Fan\ai-quant-cpp
 ```
 
-#### 3.1 数据下载类
+#### 3.1 week1(cpp) 策略/指标/选股案例
 
-运行前需要设置 `TUSHARE_TOKEN` 环境变量：
+`week1(cpp)/` 下的 C++ 转换脚本（数据下载、MACD/网格策略、茅台指标、选股等）使用方法详见 `week1(cpp)/README.md`，包括目标名前缀、运行示例和依赖数据说明。
 
-```powershell
-$env:TUSHARE_TOKEN = "你的token"
-```
-
-```powershell
-# 下载寒武纪日线数据
-./build/bin/Debug/01_tushare_download_data.exe
-
-# 下载财务数据
-./build/bin/Debug/10_tushare_financial_data_download.exe
-```
-
-#### 3.2 策略回测 / 指标计算类
-
-这些程序依赖 `data/600519_SH_daily.csv`：
-
-```powershell
-./build/bin/Debug/02_macd_strategy_2025.exe
-./build/bin/Debug/03_grid_strategy_2025.exe
-./build/bin/Debug/05_moutai_ma_signals.exe
-./build/bin/Debug/06_moutai_macd_signals.exe
-./build/bin/Debug/07_moutai_rsi.exe
-./build/bin/Debug/08_moutai_atr.exe
-./build/bin/Debug/09_moutai_indicator_dashboard.exe
-```
-
-#### 3.3 选股类
-
-这些程序依赖 `data/stock_basic.csv`、`data/daily_basic_latest.csv`、`data/fina_indicator_pool.csv`：
-
-```powershell
-./build/bin/Debug/03_graham_pb_stock_picker.exe
-./build/bin/Debug/04_fundamental_stock_picker.exe
-```
-
-#### 3.4 week2(cpp) 数据/因子案例
+#### 3.2 week2(cpp) 数据/因子案例
 
 `week2(cpp)/` 下的 C++ 转换脚本（数据采集、多因子选股、关键催化剂等）使用方法详见 `week2(cpp)/README.md`，包括 Tushare Token、MySQL `.env` 配置、各脚本参数及常见问题。
 
