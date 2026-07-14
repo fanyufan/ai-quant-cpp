@@ -120,11 +120,20 @@ add_week2_executable(w2_infra_05_multi_factor_filter2 "3-Infrastructure_Building
 add_week2_executable(w2_data_06_key_catalyst_collection "4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection" "06_key_catalyst_collection")
 add_week2_executable(w2_data_08_market_data_collection "4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection" "08_market_data_collection")
 target_link_libraries(w2_data_08_market_data_collection PRIVATE quant_mysql)
+
+# MariaDB 动态认证插件（如 caching_sha2_password）需要与 libmariadb.dll 一起部署
+add_dependencies(w2_data_08_market_data_collection caching_sha2_password)
 add_custom_command(TARGET w2_data_08_market_data_collection POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "$<TARGET_FILE:libmariadb>"
     "$<TARGET_FILE_DIR:w2_data_08_market_data_collection>"
   COMMENT "Copying libmariadb.dll for 08_market_data_collection"
+)
+add_custom_command(TARGET w2_data_08_market_data_collection POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "$<TARGET_FILE:caching_sha2_password>"
+    "$<TARGET_FILE_DIR:w2_data_08_market_data_collection>"
+  COMMENT "Copying caching_sha2_password.dll for 08_market_data_collection"
 )
 add_week2_executable(w2_data_09_financial_data_collection "4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection" "09_financial_data_collection")
 add_week2_executable(w2_data_10_macro_data_collection "4-Data_Acquisition_Cleaning-20260225/CASE-DataCollection" "10_macro_data_collection")

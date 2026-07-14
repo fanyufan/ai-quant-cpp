@@ -4,6 +4,8 @@
 #include <thread>
 #include <chrono>
 #include <stdexcept>
+#include <sstream>
+#include <algorithm>
 
 namespace quant::tushare {
 
@@ -34,12 +36,27 @@ json Client::call_api(const std::string& api_name, const json& params, const std
         std::chrono::steady_clock::now().time_since_epoch()).count();
 
     if (response.status_code != 200) {
-        throw std::runtime_error(fmt::format("HTTP error {}: {}", response.status_code, response.text));
+        std::ostringstream oss;
+        oss << "HTTP error " << response.status_code << ", response preview:\n";
+        oss.write(response.text.data(),
+                  static_cast<std::streamsize>(std::min(response.text.size(), size_t(500))));
+        throw std::runtime_error(oss.str());
     }
 
-    json result = json::parse(response.text);
+    json result;
+    try {
+        result = json::parse(response.text);
+    } catch (const json::parse_error& e) {
+        std::ostringstream oss;
+        oss << "JSON parse error: " << e.what() << "\nResponse preview (first 500 bytes):\n";
+        oss.write(response.text.data(),
+                  static_cast<std::streamsize>(std::min(response.text.size(), size_t(500))));
+        throw std::runtime_error(oss.str());
+    }
+
     if (result.contains("code") && result["code"].get<int>() != 0) {
-        throw std::runtime_error(fmt::format("Tushare API error: {}", result.value("msg", "unknown")));
+        std::string msg = result.value("msg", "unknown");
+        throw std::runtime_error("Tushare API error: " + msg);
     }
     return result;
 }
