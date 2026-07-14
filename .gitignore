@@ -14,10 +14,20 @@ scripts/
 
 # 原始文件跟数据
 week1/
+week2/
 data/
 
 # MASTER 开源训练/测试数据 pkl（体积过大，不进入版本控制）
 week6/12-论文复现与策略进化-20260325/MASTER-master/data/opensource/*.pkl
+
+# 本地 secrets
+.env
+
+# 外部依赖源码/二进制（自行下载）
+third_party/
+
+# 运行输出
+outputs/
 
 # ==================== C++ 通用模板规则 ====================
 

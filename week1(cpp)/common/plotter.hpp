@@ -27,4 +27,11 @@ void save_multi_subplot(const std::string& path,
                         const std::vector<std::string>& titles,
                         const std::string& main_title);
 
+void save_horizontal_bar_chart(const std::string& path,
+                               const std::vector<std::string>& labels,
+                               const std::vector<double>& values,
+                               const std::string& title,
+                               const std::string& xlabel,
+                               bool ascending = false);
+
 } // namespace quant::plot

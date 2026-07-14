@@ -17,6 +17,24 @@ public:
                const std::string& start_date,
                const std::string& end_date);
 
+    json pro_bar(const std::string& ts_code,
+                 const std::string& start_date,
+                 const std::string& end_date,
+                 const std::string& adj = "qfq",
+                 const std::string& freq = "D",
+                 const std::string& fields = "");
+
+    json adj_factor(const std::string& ts_code,
+                    const std::string& start_date,
+                    const std::string& end_date,
+                    const std::string& fields = "");
+
+    json stk_mins(const std::string& ts_code,
+                  const std::string& freq,
+                  const std::string& start_time,
+                  const std::string& end_time,
+                  const std::string& fields = "");
+
     json stock_basic(const std::string& exchange = "",
                      const std::string& list_status = "L",
                      const std::string& fields = "");
@@ -24,6 +42,35 @@ public:
     json fina_indicator(const std::string& ts_code,
                         const std::string& period,
                         const std::string& fields = "");
+
+    // 宏观经济月频接口
+    json cn_cpi(const std::string& start_m,
+                const std::string& end_m,
+                const std::string& fields = "");
+
+    json cn_ppi(const std::string& start_m,
+                const std::string& end_m,
+                const std::string& fields = "");
+
+    json cn_pmi(const std::string& start_m,
+                const std::string& end_m,
+                const std::string& fields = "");
+
+    json cn_m(const std::string& start_m,
+              const std::string& end_m,
+              const std::string& fields = "");
+
+    json sf_month(const std::string& start_m,
+                  const std::string& end_m,
+                  const std::string& fields = "");
+
+    json cn_gdp(const std::string& start_q,
+                const std::string& end_q,
+                const std::string& fields = "");
+
+    json lpr_data(const std::string& start_date,
+                  const std::string& end_date,
+                  const std::string& fields = "");
 
     json daily_basic(const std::string& trade_date,
                      const std::string& fields = "");

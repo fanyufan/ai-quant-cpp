@@ -1,4 +1,6 @@
 #include "plotter.hpp"
+#include <algorithm>
+#include <numeric>
 #include <fmt/format.h>
 
 namespace quant::plot {
@@ -94,6 +96,49 @@ void save_multi_subplot(const std::string& path,
         ax->title(titles[i]);
         ax->grid(on);
     }
+    fig->save(path);
+}
+
+void save_horizontal_bar_chart(const std::string& path,
+                               const std::vector<std::string>& labels,
+                               const std::vector<double>& values,
+                               const std::string& title,
+                               const std::string& xlabel,
+                               bool ascending) {
+    if (labels.empty() || values.empty() || labels.size() != values.size()) return;
+
+    std::vector<std::pair<std::string, double>> pairs;
+    pairs.reserve(labels.size());
+    for (size_t i = 0; i < labels.size(); ++i) {
+        pairs.emplace_back(labels[i], values[i]);
+    }
+
+    std::sort(pairs.begin(), pairs.end(),
+              [ascending](const auto& a, const auto& b) {
+                  return ascending ? a.second < b.second : a.second > b.second;
+              });
+
+    std::vector<double> y(pairs.size());
+    std::vector<double> x;
+    std::vector<std::string> sorted_labels;
+    x.reserve(pairs.size());
+    sorted_labels.reserve(pairs.size());
+    std::iota(y.begin(), y.end(), 0.0);
+    for (const auto& p : pairs) {
+        x.push_back(p.second);
+        sorted_labels.push_back(p.first);
+    }
+
+    auto fig = figure(false);
+    int height = std::max(600, static_cast<int>(pairs.size()) * 30);
+    fig->size(1200, height);
+    auto ax = fig->current_axes();
+    ax->bar(y, x)->vertical_orientation(false).face_color("steelblue").line_width(0.5);
+    ax->yticks(y);
+    ax->yticklabels(sorted_labels);
+    ax->xlabel(xlabel);
+    ax->title(title);
+    ax->grid(on);
     fig->save(path);
 }
 
