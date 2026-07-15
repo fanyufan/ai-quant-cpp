@@ -12,6 +12,12 @@ struct Bar {
     double low = 0.0;
     double close = 0.0;
     double volume = 0.0;
+
+    // Chan-theory fields (optional, default neutral)
+    int chan_signal = 0;     // 1=一买, 2=二买, 3=三买, -3=三卖
+    double chan_zg = 0.0;    // 中枢上轨
+    double chan_zd = 0.0;    // 中枢下轨
+    int weekly_trend = 0;    // 周线趋势: 1=上升, -1=下跌, 0=震荡
 };
 
 struct Trade {

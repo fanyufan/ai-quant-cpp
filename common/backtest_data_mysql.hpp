@@ -38,4 +38,10 @@ std::map<std::string, std::map<int, size_t>> get_symbol_data_summary(
     const std::string& start_date = "",
     const std::string& end_date = "");
 
+// 从 trade_stock_financial 读取每只股票最新报告期的 total_assets（总资产，单位：元）。
+// 若 report_date 为空，则使用表中最新的报告期；否则使用不超过该日期的最新报告期。
+std::map<std::string, double> load_latest_total_assets(
+    const quant::mysql::Config& cfg,
+    const std::string& report_date = "");
+
 } // namespace quant::bt::data

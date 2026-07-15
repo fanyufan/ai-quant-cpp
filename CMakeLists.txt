@@ -69,6 +69,11 @@ add_library(quant_utils STATIC
   "common/weekly_bars.cpp"
   "common/backtest_config.cpp"
   "common/turtle_utils.cpp"
+  "common/chan_analyzer.cpp"
+  "common/chan_plot.cpp"
+  "common/grid_engine.cpp"
+  "common/factor_engine.cpp"
+  "common/ml_tree.cpp"
 )
 
 target_include_directories(quant_utils PUBLIC

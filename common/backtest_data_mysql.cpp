@@ -200,4 +200,34 @@ std::map<std::string, std::map<int, size_t>> get_symbol_data_summary(
     return summary;
 }
 
+std::map<std::string, double> load_latest_total_assets(
+    const quant::mysql::Config& cfg,
+    const std::string& report_date) {
+    std::map<std::string, double> out;
+    quant::mysql::Client client(cfg);
+    if (!client.connect()) return out;
+
+    std::ostringstream sql;
+    sql << "SELECT f.stock_code, f.total_assets FROM trade_stock_financial f "
+        << "INNER JOIN (SELECT stock_code, MAX(report_date) AS max_date FROM trade_stock_financial";
+    if (!report_date.empty()) {
+        sql << " WHERE report_date <= '" << report_date << "'";
+    }
+    sql << " GROUP BY stock_code) m ON f.stock_code=m.stock_code AND f.report_date=m.max_date";
+
+    if (mysql_query(client.raw(), sql.str().c_str()) != 0) return out;
+    MYSQL_RES* res = mysql_store_result(client.raw());
+    if (!res) return out;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        std::string code = row[0] ? row[0] : "";
+        if (row[1] && row[1][0]) {
+            out[code] = std::stod(row[1]);
+        }
+    }
+    mysql_free_result(res);
+    return out;
+}
+
 } // namespace quant::bt::data
