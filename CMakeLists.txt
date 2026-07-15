@@ -64,6 +64,11 @@ add_library(quant_utils STATIC
   "common/backtest.cpp"
   "common/backtest_data.cpp"
   "common/candlestick.cpp"
+  "common/backtest_report.cpp"
+  "common/backtest_plot.cpp"
+  "common/weekly_bars.cpp"
+  "common/backtest_config.cpp"
+  "common/turtle_utils.cpp"
 )
 
 target_include_directories(quant_utils PUBLIC
@@ -138,6 +143,28 @@ function(add_week3_executable target_name source_subdir source_file)
   )
 endfunction()
 
+# Helper to add week4 executables (Turtle Trading, MySQL data loader)
+function(add_week4_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week4(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
 # 1-AI 量化交易-20260204
 add_week1_executable(ai_01_tushare_download_data "1-AI_Quant_Trading-20260204" "01_tushare_download_data")
 add_week1_executable(ai_02_macd_strategy_2025 "1-AI_Quant_Trading-20260204" "02_macd_strategy_2025")
@@ -188,6 +215,13 @@ add_week3_executable(w3_ta_06_macd_trailing_stop "6-Talib_Technical_Indicators-2
 add_week3_executable(w3_ta_07_bollinger_middle_band_stop "6-Talib_Technical_Indicators-20260304" "07_bollinger_middle_band_stop")
 add_week3_executable(w3_ta_08_adaptive_strategy "6-Talib_Technical_Indicators-20260304" "08_adaptive_strategy")
 add_week3_executable(w3_ta_09_pattern_scanner "6-Talib_Technical_Indicators-20260304" "09_pattern_scanner")
+
+# week4(cpp) targets
+# 8-Turtle_Trading-20260311
+add_week4_executable(w4_turtle_01_classic "8-Turtle_Trading-20260311" "01_classic_turtle")
+add_week4_executable(w4_turtle_02_adx "8-Turtle_Trading-20260311" "02_adx_turtle")
+add_week4_executable(w4_turtle_03_multi_tf "8-Turtle_Trading-20260311" "03_multi_tf_turtle")
+add_week4_executable(w4_turtle_04_ml "8-Turtle_Trading-20260311" "04_ml_turtle")
 
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")

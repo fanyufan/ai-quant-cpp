@@ -7,6 +7,21 @@
 
 namespace quant::bt::data {
 
+quant::mysql::Config load_mysql_config(const quant::env::EnvMap& env) {
+    quant::mysql::Config cfg;
+    cfg.host = quant::env::get_string(env, "WUCAI_SQL_HOST",
+        quant::env::get_string(env, "MYSQL_HOST", "localhost"));
+    cfg.port = quant::env::get_int(env, "WUCAI_SQL_PORT",
+        quant::env::get_int(env, "MYSQL_PORT", 3306));
+    cfg.user = quant::env::get_string(env, "WUCAI_SQL_USERNAME",
+        quant::env::get_string(env, "MYSQL_USER", "root"));
+    cfg.password = quant::env::get_string(env, "WUCAI_SQL_PASSWORD",
+        quant::env::get_string(env, "MYSQL_PASSWORD", ""));
+    cfg.database = quant::env::get_string(env, "WUCAI_SQL_DB",
+        quant::env::get_string(env, "MYSQL_DB", "wucai_trade"));
+    return cfg;
+}
+
 std::vector<Bar> load_from_mysql(const quant::mysql::Config& cfg,
                                  const std::string& stock_code,
                                  const std::string& start_date,
@@ -82,6 +97,107 @@ std::map<std::string, std::vector<Bar>> load_all_from_mysql(const quant::mysql::
     }
     mysql_free_result(res);
     return result;
+}
+
+
+
+std::vector<std::string> list_available_symbols(const quant::mysql::Config& cfg,
+                                                const std::string& start_date,
+                                                const std::string& end_date) {
+    std::vector<std::string> symbols;
+    quant::mysql::Client client(cfg);
+    if (!client.connect()) return symbols;
+
+    std::ostringstream sql;
+    sql << "SELECT DISTINCT stock_code FROM trade_stock_daily";
+    bool has_where = false;
+    if (!start_date.empty()) {
+        sql << " WHERE trade_date >= '" << start_date << "'";
+        has_where = true;
+    }
+    if (!end_date.empty()) {
+        sql << (has_where ? " AND" : " WHERE") << " trade_date <= '" << end_date << "'";
+    }
+    sql << " ORDER BY stock_code";
+
+    if (mysql_query(client.raw(), sql.str().c_str()) != 0) return symbols;
+    MYSQL_RES* res = mysql_store_result(client.raw());
+    if (!res) return symbols;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        if (row[0]) symbols.push_back(row[0]);
+    }
+    mysql_free_result(res);
+    return symbols;
+}
+
+std::map<std::string, std::string> get_symbol_names(const quant::mysql::Config& cfg,
+                                                    const std::vector<std::string>& codes) {
+    std::map<std::string, std::string> names;
+    if (codes.empty()) return names;
+
+    quant::mysql::Client client(cfg);
+    if (!client.connect()) return names;
+
+    std::ostringstream sql;
+    sql << "SELECT stock_code, stock_name FROM trade_stock_status WHERE stock_code IN (";
+    for (size_t i = 0; i < codes.size(); ++i) {
+        if (i > 0) sql << ",";
+        sql << "'" << codes[i] << "'";
+    }
+    sql << ")";
+
+    if (mysql_query(client.raw(), sql.str().c_str()) != 0) return names;
+    MYSQL_RES* res = mysql_store_result(client.raw());
+    if (!res) return names;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        std::string code = row[0] ? row[0] : "";
+        std::string name = row[1] && row[1][0] ? row[1] : code;
+        names[code] = name;
+    }
+    mysql_free_result(res);
+    return names;
+}
+
+std::map<std::string, std::map<int, size_t>> get_symbol_data_summary(
+    const quant::mysql::Config& cfg,
+    const std::vector<std::string>& codes,
+    const std::string& start_date,
+    const std::string& end_date) {
+    std::map<std::string, std::map<int, size_t>> summary;
+    if (codes.empty()) return summary;
+
+    quant::mysql::Client client(cfg);
+    if (!client.connect()) return summary;
+
+    std::ostringstream sql;
+    sql << "SELECT stock_code, YEAR(trade_date) AS yr, COUNT(*) AS cnt FROM trade_stock_daily "
+        << "WHERE stock_code IN (";
+    for (size_t i = 0; i < codes.size(); ++i) {
+        if (i > 0) sql << ",";
+        sql << "'" << codes[i] << "'";
+    }
+    sql << ")";
+    if (!start_date.empty()) sql << " AND trade_date >= '" << start_date << "'";
+    if (!end_date.empty()) sql << " AND trade_date <= '" << end_date << "'";
+    sql << " GROUP BY stock_code, YEAR(trade_date)";
+
+    if (mysql_query(client.raw(), sql.str().c_str()) != 0) return summary;
+    MYSQL_RES* res = mysql_store_result(client.raw());
+    if (!res) return summary;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        std::string code = row[0] ? row[0] : "";
+        int year = row[1] ? std::stoi(row[1]) : 0;
+        size_t cnt = row[2] ? std::stoull(row[2]) : 0;
+        summary[code][year] = cnt;
+    }
+    mysql_free_result(res);
+    return summary;
 }
 
 } // namespace quant::bt::data
