@@ -2,7 +2,7 @@
 
 高性能 AI 量化交易系统实战 | C++ 工程化 × 策略回测 × 低延迟执行 🚀
 
-本项目将 `week1/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
+本项目将 `week1/` ~ `week4/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
 
 ---
 
@@ -34,6 +34,13 @@ ai-quant-cpp/
 ├── week2(cpp)/             # week2 的 C++ 转换实现
 │   ├── 3-Infrastructure_Building-20260211/
 │   └── 4-Data_Acquisition_Cleaning-20260225/
+├── week3/                  # 原始 Python 脚本（中文目录名）
+├── week3(cpp)/             # week3 的 C++ 转换实现
+│   ├── 5-Backtrader_Backtesting-20260228/
+│   └── 6-Talib_Technical_Indicators-20260304/
+├── week4/                  # 原始 Python 脚本（中文目录名）
+├── week4(cpp)/             # week4 的 C++ 转换实现
+│   └── 8-Turtle_Trading-20260311/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -143,6 +150,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.3 week3(cpp) 回测与技术指标
 
 `week3(cpp)/` 下的 C++ 转换脚本（Backtrader 风格回测、TA-Lib 指标/形态、选股雷达等）使用方法详见 `week3(cpp)/README.md`，包括回测引擎用法、指标演示和 MySQL 选股雷达。
+
+#### 3.4 week4(cpp) 海龟交易法则
+
+`week4(cpp)/` 下的 C++ 转换脚本（经典海龟、ADX 过滤海龟、多周期海龟、ML 增强海龟）使用方法详见 `week4(cpp)/README.md`，包括海龟策略参数、CSV/MySQL 数据源和 C++ 轻量决策树说明。
 
 ---
 
