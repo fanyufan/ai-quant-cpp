@@ -38,6 +38,26 @@ std::map<std::string, std::map<int, size_t>> get_symbol_data_summary(
     const std::string& start_date = "",
     const std::string& end_date = "");
 
+// 批量加载指定日期范围内所有股票的日线，按 stock_code 分组并过滤 min_bars。
+std::map<std::string, std::vector<Bar>> batch_load_daily(
+    const quant::mysql::Config& cfg,
+    const std::string& start_date,
+    const std::string& end_date,
+    size_t min_bars = 120);
+
+// 财务数据记录。
+struct FinancialRecord {
+    std::string date; // report_date YYYY-MM-DD
+    double value = 0.0;
+};
+
+// 批量加载财务数据。
+// 返回 map[stock_code][field] = vector<FinancialRecord>，按 report_date 升序。
+std::map<std::string, std::map<std::string, std::vector<FinancialRecord>>> load_financial_data(
+    const quant::mysql::Config& cfg,
+    const std::vector<std::string>& fields,
+    const std::string& report_date_min = "");
+
 // 从 trade_stock_financial 读取每只股票最新报告期的 total_assets（总资产，单位：元）。
 // 若 report_date 为空，则使用表中最新的报告期；否则使用不超过该日期的最新报告期。
 std::map<std::string, double> load_latest_total_assets(

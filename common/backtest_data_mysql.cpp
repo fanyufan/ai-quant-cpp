@@ -200,6 +200,89 @@ std::map<std::string, std::map<int, size_t>> get_symbol_data_summary(
     return summary;
 }
 
+std::map<std::string, std::vector<Bar>> batch_load_daily(
+    const quant::mysql::Config& cfg,
+    const std::string& start_date,
+    const std::string& end_date,
+    size_t min_bars) {
+    std::map<std::string, std::vector<Bar>> result;
+    quant::mysql::Client client(cfg);
+    if (!client.connect()) return result;
+
+    std::ostringstream sql;
+    sql << "SELECT stock_code, trade_date, open_price, high_price, low_price, "
+        << "close_price, volume FROM trade_stock_daily "
+        << "WHERE trade_date >= '" << start_date << "' AND trade_date <= '" << end_date << "' "
+        << "ORDER BY stock_code, trade_date ASC";
+
+    if (mysql_query(client.raw(), sql.str().c_str()) != 0) return result;
+    MYSQL_RES* res = mysql_store_result(client.raw());
+    if (!res) return result;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        std::string code = row[0] ? row[0] : "";
+        Bar bar;
+        bar.date = row[1] ? row[1] : "";
+        bar.open = row[2] ? std::stod(row[2]) : 0.0;
+        bar.high = row[3] ? std::stod(row[3]) : 0.0;
+        bar.low = row[4] ? std::stod(row[4]) : 0.0;
+        bar.close = row[5] ? std::stod(row[5]) : 0.0;
+        bar.volume = row[6] ? std::stod(row[6]) : 0.0;
+        result[code].push_back(bar);
+    }
+    mysql_free_result(res);
+
+    for (auto it = result.begin(); it != result.end();) {
+        if (it->second.size() < min_bars) {
+            it = result.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    return result;
+}
+
+std::map<std::string, std::map<std::string, std::vector<FinancialRecord>>> load_financial_data(
+    const quant::mysql::Config& cfg,
+    const std::vector<std::string>& fields,
+    const std::string& report_date_min) {
+    std::map<std::string, std::map<std::string, std::vector<FinancialRecord>>> result;
+    if (fields.empty()) return result;
+
+    quant::mysql::Client client(cfg);
+    if (!client.connect()) return result;
+
+    std::ostringstream sql;
+    sql << "SELECT stock_code, report_date";
+    for (const auto& f : fields) sql << ", " << f;
+    sql << " FROM trade_stock_financial WHERE 1=1";
+    if (!report_date_min.empty()) {
+        sql << " AND report_date >= '" << report_date_min << "'";
+    }
+    sql << " ORDER BY stock_code, report_date ASC";
+
+    if (mysql_query(client.raw(), sql.str().c_str()) != 0) return result;
+    MYSQL_RES* res = mysql_store_result(client.raw());
+    if (!res) return result;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        std::string code = row[0] ? row[0] : "";
+        std::string date = row[1] ? row[1] : "";
+        for (size_t i = 0; i < fields.size(); ++i) {
+            if (row[i + 2] && row[i + 2][0]) {
+                FinancialRecord rec;
+                rec.date = date;
+                rec.value = std::stod(row[i + 2]);
+                result[code][fields[i]].push_back(rec);
+            }
+        }
+    }
+    mysql_free_result(res);
+    return result;
+}
+
 std::map<std::string, double> load_latest_total_assets(
     const quant::mysql::Config& cfg,
     const std::string& report_date) {

@@ -51,4 +51,32 @@ AdxResult adx(const std::vector<double>& high,
               const std::vector<double>& close,
               size_t period = 14);
 
+// Slow Stochastic (KDJ style): fastk_period, slowk_period, slowd_period
+struct StochResult {
+    std::vector<double> k;
+    std::vector<double> d;
+};
+StochResult stoch(const std::vector<double>& high,
+                  const std::vector<double>& low,
+                  const std::vector<double>& close,
+                  size_t fastk_period = 9,
+                  size_t slowk_period = 3,
+                  size_t slowd_period = 3);
+
+// Commodity Channel Index
+std::vector<double> cci(const std::vector<double>& high,
+                        const std::vector<double>& low,
+                        const std::vector<double>& close,
+                        size_t period = 14);
+
+// Williams %R
+std::vector<double> willr(const std::vector<double>& high,
+                          const std::vector<double>& low,
+                          const std::vector<double>& close,
+                          size_t period = 14);
+
+// On Balance Volume
+std::vector<double> obv(const std::vector<double>& close,
+                        const std::vector<double>& volume);
+
 } // namespace quant::ind

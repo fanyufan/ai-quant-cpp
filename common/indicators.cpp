@@ -1,5 +1,6 @@
 #include "indicators.hpp"
 #include <cmath>
+#include <deque>
 #include <limits>
 
 namespace quant::ind {
@@ -232,6 +233,135 @@ AdxResult adx(const std::vector<double>& high,
         for (size_t i = 2 * period; i < n; ++i) {
             result.adx[i] = (result.adx[i - 1] * (period - 1) + result.dx[i]) / static_cast<double>(period);
         }
+    }
+    return result;
+}
+
+namespace {
+
+std::vector<double> rolling_max_ind(const std::vector<double>& vals, size_t period) {
+    std::vector<double> out(vals.size(), std::numeric_limits<double>::quiet_NaN());
+    if (vals.empty() || period == 0) return out;
+    std::deque<size_t> dq;
+    for (size_t i = 0; i < vals.size(); ++i) {
+        while (!dq.empty() && vals[dq.back()] <= vals[i]) dq.pop_back();
+        dq.push_back(i);
+        while (!dq.empty() && dq.front() + period <= i) dq.pop_front();
+        if (i + 1 >= period) out[i] = vals[dq.front()];
+    }
+    return out;
+}
+
+std::vector<double> rolling_min_ind(const std::vector<double>& vals, size_t period) {
+    std::vector<double> out(vals.size(), std::numeric_limits<double>::quiet_NaN());
+    if (vals.empty() || period == 0) return out;
+    std::deque<size_t> dq;
+    for (size_t i = 0; i < vals.size(); ++i) {
+        while (!dq.empty() && vals[dq.back()] >= vals[i]) dq.pop_back();
+        dq.push_back(i);
+        while (!dq.empty() && dq.front() + period <= i) dq.pop_front();
+        if (i + 1 >= period) out[i] = vals[dq.front()];
+    }
+    return out;
+}
+
+} // namespace
+
+StochResult stoch(const std::vector<double>& high,
+                  const std::vector<double>& low,
+                  const std::vector<double>& close,
+                  size_t fastk_period,
+                  size_t slowk_period,
+                  size_t slowd_period) {
+    size_t n = close.size();
+    StochResult result;
+    result.k.assign(n, std::numeric_limits<double>::quiet_NaN());
+    result.d.assign(n, std::numeric_limits<double>::quiet_NaN());
+    if (n == 0 || high.size() != n || low.size() != n || fastk_period == 0) return result;
+
+    std::vector<double> fastk(n, std::numeric_limits<double>::quiet_NaN());
+    auto hh = rolling_max_ind(high, fastk_period);
+    auto ll = rolling_min_ind(low, fastk_period);
+    for (size_t i = fastk_period - 1; i < n; ++i) {
+        double range = hh[i] - ll[i];
+        if (range > 0.0) {
+            fastk[i] = (close[i] - ll[i]) / range * 100.0;
+        }
+    }
+    auto fill_leading = [](std::vector<double>& v) {
+        size_t first = 0;
+        while (first < v.size() && std::isnan(v[first])) ++first;
+        if (first < v.size()) {
+            for (size_t i = 0; i < first; ++i) v[i] = v[first];
+        }
+    };
+    fill_leading(fastk);
+    auto slowk = sma(fastk, slowk_period);
+    fill_leading(slowk);
+    auto slowd = sma(slowk, slowd_period);
+    result.k = std::move(slowk);
+    result.d = std::move(slowd);
+    return result;
+}
+
+std::vector<double> cci(const std::vector<double>& high,
+                        const std::vector<double>& low,
+                        const std::vector<double>& close,
+                        size_t period) {
+    size_t n = close.size();
+    std::vector<double> result(n, std::numeric_limits<double>::quiet_NaN());
+    if (n == 0 || high.size() != n || low.size() != n || period == 0) return result;
+
+    std::vector<double> tp(n);
+    for (size_t i = 0; i < n; ++i) tp[i] = (high[i] + low[i] + close[i]) / 3.0;
+    auto tp_sma = sma(tp, period);
+
+    for (size_t i = period - 1; i < n; ++i) {
+        double mean_dev = 0.0;
+        for (size_t j = i + 1 - period; j <= i; ++j) {
+            mean_dev += std::abs(tp[j] - tp_sma[i]);
+        }
+        mean_dev /= static_cast<double>(period);
+        if (mean_dev > 0.0) {
+            result[i] = (tp[i] - tp_sma[i]) / (0.015 * mean_dev);
+        }
+    }
+    return result;
+}
+
+std::vector<double> willr(const std::vector<double>& high,
+                          const std::vector<double>& low,
+                          const std::vector<double>& close,
+                          size_t period) {
+    size_t n = close.size();
+    std::vector<double> result(n, std::numeric_limits<double>::quiet_NaN());
+    if (n == 0 || high.size() != n || low.size() != n || period == 0) return result;
+
+    auto hh = rolling_max_ind(high, period);
+    auto ll = rolling_min_ind(low, period);
+    for (size_t i = period - 1; i < n; ++i) {
+        double range = hh[i] - ll[i];
+        if (range > 0.0) {
+            result[i] = (hh[i] - close[i]) / range * -100.0;
+        }
+    }
+    return result;
+}
+
+std::vector<double> obv(const std::vector<double>& close,
+                        const std::vector<double>& volume) {
+    size_t n = close.size();
+    std::vector<double> result(n, std::numeric_limits<double>::quiet_NaN());
+    if (n == 0 || volume.size() != n) return result;
+    double obv_val = 0.0;
+    for (size_t i = 0; i < n; ++i) {
+        if (i == 0) {
+            obv_val = volume[i];
+        } else {
+            if (close[i] > close[i - 1]) obv_val += volume[i];
+            else if (close[i] < close[i - 1]) obv_val -= volume[i];
+        }
+        result[i] = obv_val;
     }
     return result;
 }
