@@ -170,6 +170,28 @@ function(add_week4_executable target_name source_subdir source_file)
   )
 endfunction()
 
+# Helper to add week5 executables (Chan theory, grid, multi-factor)
+function(add_week5_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week5(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
 # 1-AI 量化交易-20260204
 add_week1_executable(ai_01_tushare_download_data "1-AI_Quant_Trading-20260204" "01_tushare_download_data")
 add_week1_executable(ai_02_macd_strategy_2025 "1-AI_Quant_Trading-20260204" "02_macd_strategy_2025")
@@ -228,6 +250,24 @@ add_week4_executable(w4_turtle_02_adx "8-Turtle_Trading-20260311" "02_adx_turtle
 add_week4_executable(w4_turtle_03_multi_tf "8-Turtle_Trading-20260311" "03_multi_tf_turtle")
 add_week4_executable(w4_turtle_04_ml "8-Turtle_Trading-20260311" "04_ml_turtle")
 
+# week5(cpp) targets
+# 9-Chan_Theory-20260314
+add_week5_executable(w5_chan_01_merge_fractals "9-Chan_Theory-20260314" "01_kline_merge_fractals")
+add_week5_executable(w5_chan_02_bi "9-Chan_Theory-20260314" "02_bi_recognition")
+add_week5_executable(w5_chan_03_zhongshu "9-Chan_Theory-20260314" "03_zhongshu")
+add_week5_executable(w5_chan_04_signals "9-Chan_Theory-20260314" "04_signals")
+add_week5_executable(w5_chan_05_third_buy "9-Chan_Theory-20260314" "05_third_buy_backtest")
+add_week5_executable(w5_chan_06_enhanced "9-Chan_Theory-20260314" "06_volume_enhanced")
+add_week5_executable(w5_chan_07_multi_tf "9-Chan_Theory-20260314" "07_multi_tf")
+add_week5_executable(w5_chan_08_ml_chan "9-Chan_Theory-20260314" "08_ml_chan")
+
+# 10-网格与多因子-20260318
+add_week5_executable(w5_grid_01_classic "10-Grid_and_Factors-20260318" "01_classic_grid")
+add_week5_executable(w5_factor_04_eval "10-Grid_and_Factors-20260318" "04_factor_evaluation")
+add_week5_executable(w5_factor_05_scoring "10-Grid_and_Factors-20260318" "05_factor_scoring")
+add_week5_executable(w5_factor_06_small_cap "10-Grid_and_Factors-20260318" "06_small_cap_rotation")
+add_week5_executable(w5_factor_08_ml "10-Grid_and_Factors-20260318" "08_ml_multi_factor")
+
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")
 target_include_directories(mariadb_link_test PRIVATE
@@ -244,3 +284,5 @@ add_custom_command(TARGET mariadb_link_test POST_BUILD
     "$<TARGET_FILE_DIR:mariadb_link_test>"
   COMMENT "Copying libmariadb.dll to output directory"
 )
+
+
