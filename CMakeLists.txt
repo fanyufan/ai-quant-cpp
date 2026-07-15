@@ -73,6 +73,8 @@ add_library(quant_utils STATIC
   "common/chan_plot.cpp"
   "common/grid_engine.cpp"
   "common/factor_engine.cpp"
+  "common/ml_features.cpp"
+  "common/ml_preprocessing.cpp"
   "common/ml_tree.cpp"
 )
 
@@ -192,6 +194,28 @@ function(add_week5_executable target_name source_subdir source_file)
   )
 endfunction()
 
+# Helper to add week6 executables (ML factor mining, paper replication)
+function(add_week6_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week6(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
 # 1-AI 量化交易-20260204
 add_week1_executable(ai_01_tushare_download_data "1-AI_Quant_Trading-20260204" "01_tushare_download_data")
 add_week1_executable(ai_02_macd_strategy_2025 "1-AI_Quant_Trading-20260204" "02_macd_strategy_2025")
@@ -267,6 +291,17 @@ add_week5_executable(w5_factor_04_eval "10-Grid_and_Factors-20260318" "04_factor
 add_week5_executable(w5_factor_05_scoring "10-Grid_and_Factors-20260318" "05_factor_scoring")
 add_week5_executable(w5_factor_06_small_cap "10-Grid_and_Factors-20260318" "06_small_cap_rotation")
 add_week5_executable(w5_factor_08_ml "10-Grid_and_Factors-20260318" "08_ml_multi_factor")
+
+# week6(cpp) targets
+# 11-机器学习因子挖掘-20260321
+add_week6_executable(w6_ml_01_moutai_factor_analysis "11-ML_Factor_Mining-20260321" "01_moutai_factor_analysis")
+add_week6_executable(w6_ml_02_feature_engineering "11-ML_Factor_Mining-20260321" "02_feature_engineering")
+add_week6_executable(w6_ml_03_xgboost_like_prediction "11-ML_Factor_Mining-20260321" "03_xgboost_like_prediction")
+add_week6_executable(w6_ml_04_model_comparison "11-ML_Factor_Mining-20260321" "04_model_comparison")
+
+# 12-论文复现与策略进化-20260325
+add_week6_executable(w6_paper_01_master_eda "12-Paper_Replication-20260325" "01_master_eda")
+add_week6_executable(w6_paper_03_cross_sectional_prediction "12-Paper_Replication-20260325" "03_cross_sectional_prediction")
 
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")
