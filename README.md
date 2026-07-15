@@ -2,7 +2,7 @@
 
 高性能 AI 量化交易系统实战 | C++ 工程化 × 策略回测 × 低延迟执行 🚀
 
-本项目将 `week1/` ~ `week5/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
+本项目将 `week1/` ~ `week6/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
 
 ---
 
@@ -45,6 +45,10 @@ ai-quant-cpp/
 ├── week5(cpp)/             # week5 的 C++ 转换实现
 │   ├── 9-Chan_Theory-20260314/
 │   └── 10-Grid_and_Factors-20260318/
+├── week6/                  # 原始 Python 脚本（中文目录名）
+├── week6(cpp)/             # week6 的 C++ 转换实现
+│   ├── 11-ML_Factor_Mining-20260321/
+│   └── 12-Paper_Replication-20260325/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -124,11 +128,12 @@ ninja -C build fb_08_moutai_atr
 - `w3_xxx`：`week3(cpp)/` 回测与技术指标案例
 - `w4_xxx`：`week4(cpp)/` 海龟交易法则案例
 - `w5_xxx`：`week5(cpp)/` 缠论、网格与多因子案例
+- `w6_xxx`：`week6(cpp)/` 机器学习因子挖掘与论文复现案例
 
 查看所有目标：
 
 ```powershell
-ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_)"
+ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_)"
 ```
 
 编译完成后，可执行文件位于（取决于 CMake 构建类型，如 `Debug` 或 `Release`）：
@@ -167,6 +172,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.5 week5(cpp) 缠论、网格与多因子
 
 `week5(cpp)/` 下的 C++ 转换脚本（自研缠论分析器、三类买卖点、网格交易、多因子选股与 ML 增强）使用方法详见 `week5(cpp)/README.md`，包括 `chan.py` 相关脚本的排除说明、公共 API 和 MySQL 数据要求。
+
+#### 3.6 week6(cpp) 机器学习因子挖掘与论文复现
+
+`week6(cpp)/` 下的 C++ 转换脚本（52 维技术因子、特征工程、RandomForest 涨跌预测、DecisionTree/RandomForest 对比调参、MASTER 数据探索与截面预测）使用方法详见 `week6(cpp)/README.md`，包括自研 ML 引擎对 XGBoost/LightGBM/Optuna 的替代说明、`.env` 配置与运行示例。
 
 ---
 
