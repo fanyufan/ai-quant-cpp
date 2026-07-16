@@ -76,10 +76,13 @@ add_library(quant_utils STATIC
   "common/ml_features.cpp"
   "common/ml_preprocessing.cpp"
   "common/ml_tree.cpp"
+  "common/financial_abstract.cpp"
 )
 
 target_include_directories(quant_utils PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/common"
+  "${CMAKE_CURRENT_SOURCE_DIR}/third_party/mariadb-connector-c-3.4.9/include"
+  "${CMAKE_CURRENT_BINARY_DIR}/third_party/mariadb-connector-c-3.4.9/include"
 )
 
 target_link_libraries(quant_utils PUBLIC
@@ -329,6 +332,33 @@ add_week6_executable(w6_paper_03_cross_sectional_prediction "12-Paper_Replicatio
 # 13-QuantStats绩效分析与报告-20260328
 add_week7_executable(w7_qs_02_svd_factor_mining "13-QuantStats_Performance_Report-20260328" "02_svd_factor_mining")
 add_week7_executable(w7_qs_03_live_trade_report "13-QuantStats_Performance_Report-20260328" "03_live_trade_report")
+
+# Helper to add week8 executables (smart report generation, financial analysis)
+function(add_week8_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week8(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
+# week8(cpp) targets
+# 15-智能研报生成-20260404
+add_week8_executable(w8_sr_01_financial_ratio_analysis "15-Smart_Report_Generation-20260404" "01_financial_ratio_analysis")
+add_week8_executable(w8_sr_02_peer_comparison "15-Smart_Report_Generation-20260404" "02_peer_comparison")
 
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")

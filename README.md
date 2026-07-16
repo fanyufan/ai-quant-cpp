@@ -52,6 +52,9 @@ ai-quant-cpp/
 ├── week7/                  # 原始 Python 脚本（中文目录名）
 ├── week7(cpp)/             # week7 的 C++ 转换实现
 │   └── 13-QuantStats_Performance_Report-20260328/
+├── week8/                  # 原始 Python 脚本（中文目录名）
+├── week8(cpp)/             # week8 的 C++ 转换实现
+│   └── 15-Smart_Report_Generation-20260404/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -133,11 +136,12 @@ ninja -C build fb_08_moutai_atr
 - `w5_xxx`：`week5(cpp)/` 缠论、网格与多因子案例
 - `w6_xxx`：`week6(cpp)/` 机器学习因子挖掘与论文复现案例
 - `w7_xxx`：`week7(cpp)/` QuantStats 绩效分析与 SVD 因子挖掘案例
+- `w8_xxx`：`week8(cpp)/` 智能研报生成财务分析案例
 
 查看所有目标：
 
 ```powershell
-ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_)"
+ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_)"
 ```
 
 编译完成后，可执行文件位于（取决于 CMake 构建类型，如 `Debug` 或 `Release`）：
@@ -184,6 +188,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.7 week7(cpp) QuantStats 绩效分析与 SVD 因子挖掘
 
 `week7(cpp)/` 下的 C++ 转换脚本（SVD 收益率矩阵分解、隐因子解读、滚动 SVD、因子压缩与 RandomForest 对比、实盘成交 CSV 绩效分析）使用方法详见 `week7(cpp)/README.md`，包括跳过脚本的说明、自研 SVD 引擎与 HTML/LLM 功能简化的差异。
+
+#### 3.8 week8(cpp) 智能研报生成（财务分析工具）
+
+`week8(cpp)/` 下的 C++ 转换脚本（单股票财务比率分析、同行财务对比）使用方法详见 `week8(cpp)/README.md`。本次仅转换 2 个纯财务分析工具，LLM Agent、PDF 解析、FAISS/RAG、舆情情感、nanobot 等模块全部跳过。
 
 ---
 
