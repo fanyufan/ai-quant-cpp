@@ -418,6 +418,36 @@ endfunction()
 add_week10_executable(w10_rs_01_kris_risk_engine "19-Risk_System-20260418" "01_kris_risk_engine")
 add_week10_executable(w10_rs_02_atr_risk_demo "19-Risk_System-20260418" "02_atr_risk_demo")
 
+# Helper to add week11 executables (morning meeting & live trading)
+function(add_week11_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week11(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
+# week11(cpp) targets
+# 21-投资晨会-20260425
+add_week11_executable(w11_mm_01_sector_rotation "21-Morning_Meeting-20260425" "01_sector_rotation")
+add_week11_executable(w11_mm_02_factor_backtest "21-Morning_Meeting-20260425" "02_factor_layered_backtest")
+# 22-实盘作战与CEO控制台-20260429
+add_week11_executable(w11_lt_03_dragon_picker "22-Live_Trading-20260429" "03_dragon_picker")
+add_week11_executable(w11_lt_04_dragon_backtest "22-Live_Trading-20260429" "04_dragon_backtest")
+
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")
 target_include_directories(mariadb_link_test PRIVATE

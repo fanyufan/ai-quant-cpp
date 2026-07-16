@@ -62,6 +62,10 @@ ai-quant-cpp/
 ├── week10/                 # 原始 Python 脚本（中文目录名）
 ├── week10(cpp)/            # week10 的 C++ 转换实现
 │   └── 19-Risk_System-20260418/
+├── week11/                 # 原始 Python 脚本（中文目录名）
+├── week11(cpp)/            # week11 的 C++ 转换实现
+│   ├── 21-Morning_Meeting-20260425/
+│   └── 22-Live_Trading-20260429/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -146,11 +150,12 @@ ninja -C build fb_08_moutai_atr
 - `w8_xxx`：`week8(cpp)/` 智能研报生成财务分析案例
 - `w9_xxx`：`week9(cpp)/` XtQuant 信号/回测与强化学习入门案例
 - `w10_xxx`：`week10(cpp)/` Kris 风控体系与 ATR 风控案例
+- `w11_xxx`：`week11(cpp)/` 板块轮动、多因子分层回测与龙头战法案例
 
 查看所有目标：
 
 ```powershell
-ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_|w9_|w10_)"
+ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_|w9_|w10_|w11_)"
 ```
 
 编译完成后，可执行文件位于（取决于 CMake 构建类型，如 `Debug` 或 `Release`）：
@@ -209,6 +214,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.10 week10(cpp) Kris 风控体系与 ATR 风控实战
 
 `week10(cpp)/` 下的 C++ 转换脚本（Kris 风控引擎、ATR 仓位/止损实战）使用方法详见 `week10(cpp)/README.md`。依赖 akshare/LLM、PyTorch、sklearn、LangGraph、MiniQMT 的脚本全部跳过。
+
+#### 3.11 week11(cpp) 投资晨会（板块轮动 + 多因子）与龙头战法
+
+`week11(cpp)/` 下的 C++ 转换脚本（板块轮动综合视图、多因子分层回测、龙头战法选股与全市场 T+1 回测）使用方法详见 `week11(cpp)/README.md`。依赖 xtdata/MiniQMT、LLM、LangGraph、Flask/Gradio、APScheduler、sklearn、webhook 推送的脚本全部跳过。
 
 ---
 
