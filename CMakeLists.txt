@@ -391,6 +391,33 @@ add_week9_executable(w9_xt_02_macd_signal_engine "17-Xtquant_Live_Trading-202604
 add_week9_executable(w9_rl_01_cartpole_qlearning "18-Reinforcement_Learning-20260415" "01_cartpole_qlearning")
 add_week9_executable(w9_rl_02_maze_qlearning "18-Reinforcement_Learning-20260415" "02_maze_qlearning")
 
+# Helper to add week10 executables (risk system)
+function(add_week10_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week10(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
+# week10(cpp) targets
+# 19-强化学习与风控体系-20260418
+add_week10_executable(w10_rs_01_kris_risk_engine "19-Risk_System-20260418" "01_kris_risk_engine")
+add_week10_executable(w10_rs_02_atr_risk_demo "19-Risk_System-20260418" "02_atr_risk_demo")
+
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")
 target_include_directories(mariadb_link_test PRIVATE

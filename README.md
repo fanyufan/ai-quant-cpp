@@ -59,6 +59,9 @@ ai-quant-cpp/
 ├── week9(cpp)/             # week9 的 C++ 转换实现
 │   ├── 17-Xtquant_Live_Trading-20260411/
 │   └── 18-Reinforcement_Learning-20260415/
+├── week10/                 # 原始 Python 脚本（中文目录名）
+├── week10(cpp)/            # week10 的 C++ 转换实现
+│   └── 19-Risk_System-20260418/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -142,11 +145,12 @@ ninja -C build fb_08_moutai_atr
 - `w7_xxx`：`week7(cpp)/` QuantStats 绩效分析与 SVD 因子挖掘案例
 - `w8_xxx`：`week8(cpp)/` 智能研报生成财务分析案例
 - `w9_xxx`：`week9(cpp)/` XtQuant 信号/回测与强化学习入门案例
+- `w10_xxx`：`week10(cpp)/` Kris 风控体系与 ATR 风控案例
 
 查看所有目标：
 
 ```powershell
-ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_|w9_)"
+ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_|w9_|w10_)"
 ```
 
 编译完成后，可执行文件位于（取决于 CMake 构建类型，如 `Debug` 或 `Release`）：
@@ -201,6 +205,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.9 week9(cpp) XtQuant 信号/回测与强化学习入门
 
 `week9(cpp)/` 下的 C++ 转换脚本（MACD/双均线回测、MACD 信号引擎、CartPole Q-learning、迷宫 Q-learning）使用方法详见 `week9(cpp)/README.md`。依赖 xtquant/MiniQMT、LLM/FAISS/PDF、PyTorch/SB3 的脚本全部跳过。
+
+#### 3.10 week10(cpp) Kris 风控体系与 ATR 风控实战
+
+`week10(cpp)/` 下的 C++ 转换脚本（Kris 风控引擎、ATR 仓位/止损实战）使用方法详见 `week10(cpp)/README.md`。依赖 akshare/LLM、PyTorch、sklearn、LangGraph、MiniQMT 的脚本全部跳过。
 
 ---
 
