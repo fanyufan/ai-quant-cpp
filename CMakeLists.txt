@@ -216,6 +216,28 @@ function(add_week6_executable target_name source_subdir source_file)
   )
 endfunction()
 
+# Helper to add week7 executables (QuantStats-style reports, SVD)
+function(add_week7_executable target_name source_subdir source_file)
+  add_executable(${target_name} "week7(cpp)/${source_subdir}/${source_file}.cpp")
+  target_link_libraries(${target_name} PRIVATE quant_utils quant_mysql)
+  set_target_properties(${target_name} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${source_file}
+  )
+  add_dependencies(${target_name} caching_sha2_password)
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:libmariadb>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying libmariadb.dll for ${target_name}"
+  )
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:caching_sha2_password>"
+      "$<TARGET_FILE_DIR:${target_name}>"
+    COMMENT "Copying caching_sha2_password.dll for ${target_name}"
+  )
+endfunction()
+
 # 1-AI 量化交易-20260204
 add_week1_executable(ai_01_tushare_download_data "1-AI_Quant_Trading-20260204" "01_tushare_download_data")
 add_week1_executable(ai_02_macd_strategy_2025 "1-AI_Quant_Trading-20260204" "02_macd_strategy_2025")
@@ -303,6 +325,11 @@ add_week6_executable(w6_ml_04_model_comparison "11-ML_Factor_Mining-20260321" "0
 add_week6_executable(w6_paper_01_master_eda "12-Paper_Replication-20260325" "01_master_eda")
 add_week6_executable(w6_paper_03_cross_sectional_prediction "12-Paper_Replication-20260325" "03_cross_sectional_prediction")
 
+# week7(cpp) targets
+# 13-QuantStats绩效分析与报告-20260328
+add_week7_executable(w7_qs_02_svd_factor_mining "13-QuantStats_Performance_Report-20260328" "02_svd_factor_mining")
+add_week7_executable(w7_qs_03_live_trade_report "13-QuantStats_Performance_Report-20260328" "03_live_trade_report")
+
 # MariaDB C Connector 链接测试
 add_executable(mariadb_link_test "common/mariadb_link_test.cpp")
 target_include_directories(mariadb_link_test PRIVATE
@@ -319,5 +346,3 @@ add_custom_command(TARGET mariadb_link_test POST_BUILD
     "$<TARGET_FILE_DIR:mariadb_link_test>"
   COMMENT "Copying libmariadb.dll to output directory"
 )
-
-
