@@ -2,7 +2,7 @@
 
 高性能 AI 量化交易系统实战 | C++ 工程化 × 策略回测 × 低延迟执行 🚀
 
-本项目将 `week1/` ~ `week6/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
+本项目将 `week1/` ~ `week7/` 目录下的 Python 量化脚本转换为 C++17 实现，使用 CMake + vcpkg 管理依赖，Ninja 构建，Matplot++ 绘图。
 
 ---
 
@@ -49,6 +49,9 @@ ai-quant-cpp/
 ├── week6(cpp)/             # week6 的 C++ 转换实现
 │   ├── 11-ML_Factor_Mining-20260321/
 │   └── 12-Paper_Replication-20260325/
+├── week7/                  # 原始 Python 脚本（中文目录名）
+├── week7(cpp)/             # week7 的 C++ 转换实现
+│   └── 13-QuantStats_Performance_Report-20260328/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -129,6 +132,7 @@ ninja -C build fb_08_moutai_atr
 - `w4_xxx`：`week4(cpp)/` 海龟交易法则案例
 - `w5_xxx`：`week5(cpp)/` 缠论、网格与多因子案例
 - `w6_xxx`：`week6(cpp)/` 机器学习因子挖掘与论文复现案例
+- `w7_xxx`：`week7(cpp)/` QuantStats 绩效分析与 SVD 因子挖掘案例
 
 查看所有目标：
 
@@ -176,6 +180,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.6 week6(cpp) 机器学习因子挖掘与论文复现
 
 `week6(cpp)/` 下的 C++ 转换脚本（52 维技术因子、特征工程、RandomForest 涨跌预测、DecisionTree/RandomForest 对比调参、MASTER 数据探索与截面预测）使用方法详见 `week6(cpp)/README.md`，包括自研 ML 引擎对 XGBoost/LightGBM/Optuna 的替代说明、`.env` 配置与运行示例。
+
+#### 3.7 week7(cpp) QuantStats 绩效分析与 SVD 因子挖掘
+
+`week7(cpp)/` 下的 C++ 转换脚本（SVD 收益率矩阵分解、隐因子解读、滚动 SVD、因子压缩与 RandomForest 对比、实盘成交 CSV 绩效分析）使用方法详见 `week7(cpp)/README.md`，包括跳过脚本的说明、自研 SVD 引擎与 HTML/LLM 功能简化的差异。
 
 ---
 
