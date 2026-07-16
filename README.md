@@ -55,6 +55,10 @@ ai-quant-cpp/
 ├── week8/                  # 原始 Python 脚本（中文目录名）
 ├── week8(cpp)/             # week8 的 C++ 转换实现
 │   └── 15-Smart_Report_Generation-20260404/
+├── week9/                  # 原始 Python 脚本（中文目录名）
+├── week9(cpp)/             # week9 的 C++ 转换实现
+│   ├── 17-Xtquant_Live_Trading-20260411/
+│   └── 18-Reinforcement_Learning-20260415/
 └── build/                  # 构建输出目录（.gitignore 忽略）
     └── bin/Debug/          # 可执行文件
 ```
@@ -137,11 +141,12 @@ ninja -C build fb_08_moutai_atr
 - `w6_xxx`：`week6(cpp)/` 机器学习因子挖掘与论文复现案例
 - `w7_xxx`：`week7(cpp)/` QuantStats 绩效分析与 SVD 因子挖掘案例
 - `w8_xxx`：`week8(cpp)/` 智能研报生成财务分析案例
+- `w9_xxx`：`week9(cpp)/` XtQuant 信号/回测与强化学习入门案例
 
 查看所有目标：
 
 ```powershell
-ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_)"
+ninja -C build -t targets | Select-String -Pattern "^(ai_|fb_|w2_|w3_|w4_|w5_|w6_|w7_|w8_|w9_)"
 ```
 
 编译完成后，可执行文件位于（取决于 CMake 构建类型，如 `Debug` 或 `Release`）：
@@ -192,6 +197,10 @@ cd C:\Fan\ai-quant-cpp
 #### 3.8 week8(cpp) 智能研报生成（财务分析工具）
 
 `week8(cpp)/` 下的 C++ 转换脚本（单股票财务比率分析、同行财务对比）使用方法详见 `week8(cpp)/README.md`。本次仅转换 2 个纯财务分析工具，LLM Agent、PDF 解析、FAISS/RAG、舆情情感、nanobot 等模块全部跳过。
+
+#### 3.9 week9(cpp) XtQuant 信号/回测与强化学习入门
+
+`week9(cpp)/` 下的 C++ 转换脚本（MACD/双均线回测、MACD 信号引擎、CartPole Q-learning、迷宫 Q-learning）使用方法详见 `week9(cpp)/README.md`。依赖 xtquant/MiniQMT、LLM/FAISS/PDF、PyTorch/SB3 的脚本全部跳过。
 
 ---
 
